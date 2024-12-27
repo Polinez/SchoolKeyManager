@@ -23,5 +23,8 @@ class Class:
     def number_of_students(self):
         return self.__numberOfStudents
 
+    @number_of_students.setter
+    def number_of_students(self,number_of_students):
+        self.__numberOfStudents=number_of_students
 
 
