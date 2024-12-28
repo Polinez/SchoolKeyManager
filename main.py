@@ -3,10 +3,10 @@ import re
 from tkinter import *
 from tkinter import messagebox
 from tkinter.ttk import Combobox
-from unicodedata import numeric
 
 # Database
 from dataBase.data import *
+
 # objects
 from classes.key import Key
 from classes.schoolClass import Class
