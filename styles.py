@@ -1,3 +1,5 @@
+from tkinter.ttk import Treeview
+
 LABEL_STYLE = {
     "bg": "black",
     "fg": "white",

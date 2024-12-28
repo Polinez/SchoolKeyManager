@@ -13,6 +13,9 @@ class Class:
     def __str__(self):
         return f"{self.__ID}. {self.__className}, ilosc uczniow:{self.__numberOfStudents}"
 
+    @property
+    def ID(self):
+        return self.__ID
 
     @property
     def name(self):

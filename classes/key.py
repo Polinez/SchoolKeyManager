@@ -13,13 +13,11 @@ class Key():
     def display_if_not_assigned(self):
         return f"Klucz oraz szafka nr:{self.__number} nie ma przydzielonej klasy."
 
-    def change_status(self):
-        if self.__status=="Dostępny":
-            self.__status="Wypożyczony"
-        else:
-            self.__status="Dostępny"
 
 
+    @property
+    def ID(self):
+        return self.__ID
 
     @property
     def number(self):
