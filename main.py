@@ -48,7 +48,7 @@ def add_key():
     clear_frame()
     back_btn = button_back()
     back_btn.place(x=10, y=10)
-    title = Label(content_frame, text="Dodaj klucz", **MAIN_LABEL_STYLE)
+    title = Label(content_frame, text="Dodaj/Edytuj klucz", **MAIN_LABEL_STYLE)
     title.pack(pady=20)
 
     key_nr_lb = Label(content_frame, text="Numer klucza", **LABEL_STYLE)
@@ -145,7 +145,7 @@ def add_key():
     # Define columns and their headings
     key_table.heading("ID", text="ID")
     key_table.heading("Numer", text="Numer klucza")
-    key_table.heading("Przypisany do klasy", text="Przypisany do klasy")
+    key_table.heading("Przypisany do klasy", text="Przypisany do klasy/koszyka")
     key_table.heading("Status", text="Status")
 
     # Adjust column width
@@ -175,7 +175,7 @@ def add_locker():
     clear_frame()
     back_btn = button_back()
     back_btn.place(x=10, y=10)
-    title = Label(content_frame, text="Dodaj szafkę", **MAIN_LABEL_STYLE)
+    title = Label(content_frame, text="Dodaj/Edytuj szafkę", **MAIN_LABEL_STYLE)
     title.pack(pady=20)
 
     locker_nr_label = Label(content_frame, text="Numer szafki", **LABEL_STYLE)
@@ -251,7 +251,7 @@ def add_locker():
                         else:
                             return
                 if l.room == room and l.position == (row, column):
-                    messagebox.showerror("Błąd", "Inna szafka stoi na tym polozeniu.")
+                    messagebox.showerror("Błąd", f"Szafka nr {l.number} stoi na tym polozeniu.")
                     return
 
 
@@ -313,7 +313,7 @@ def add_class():
     clear_frame()
     back_btn = button_back()
     back_btn.place(x=10, y=10)
-    title = Label(content_frame, text="Dodaj klasę", **MAIN_LABEL_STYLE)
+    title = Label(content_frame, text="Dodaj/Edytuj klasę", **MAIN_LABEL_STYLE)
     title.pack(pady=20)
 
     class_name_label = Label(content_frame, text="Nazwa klasy", **LABEL_STYLE)
@@ -419,9 +419,9 @@ def main():
     button_frame.pack(fill=X, pady=20)
 
     buttons = [
-        ("Dodaj klucz", add_key),
-        ("Dodaj szafkę", add_locker),
-        ("Dodaj klasę", add_class)
+        ("Klucze", add_key),
+        ("Szafki", add_locker),
+        ("Klasy", add_class)
     ]
 
     for text, command in buttons:
