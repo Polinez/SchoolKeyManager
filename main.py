@@ -13,6 +13,8 @@ from classes.schoolClass import Class
 from classes.locker import Locker
 # styles
 from styles import *
+# actions
+from actions.actions import *
 
 
 # Main window config
@@ -99,7 +101,7 @@ def add_key():
                             update_key_status_in_db(k)
                             # refresh Treeview
                             refresh_key_table()
-                            messagebox.showinfo("Sukces", "Klucz został przypisany pomyślnie do nowego miejsca.")
+                            messagebox.showinfo("Sukces", f"Klucz {key_nr.get()} został przypisany pomyślnie do nowego miejsca.")
                             return
                         else:
                             return
@@ -124,6 +126,7 @@ def add_key():
                 if l.number == number:
                     l.key_assigned = True
                     update_locker_status_in_db(l)
+            messagebox.showinfo("Sukces", f"Klucz {key_nr.get()} dodany pomyślnie do {key_class.get()}.")
         except ValueError:
             messagebox.showerror("Błąd", "Numer klucza musi być liczbą całkowitą.")
             return
@@ -246,7 +249,7 @@ def add_locker():
                             update_locker_position_in_db(l)
                             # refresh table
                             update_locker_table()
-                            messagebox.showinfo("Sukces", "Szafka zaktualizowana pomyślnie.")
+                            messagebox.showinfo("Sukces", f"Szafka {number} zaktualizowana pomyślnie.")
                             return
                         else:
                             return
@@ -264,6 +267,7 @@ def add_locker():
             update_locker_table()
             # adding to db
             add_locker_to_db(locker)
+            messagebox.showinfo("Sukces", f"Szafka {number} dodana pomyślnie.")
         except ValueError:
             messagebox.showerror("Błąd", "Numer szafki, rząd i kolumna muszą być liczbami całkowitymi.")
             return
@@ -349,7 +353,7 @@ def add_class():
                             c.number_of_students = int(class_number.get())
                             update_class_in_db(c)
                             refresh_class_table()
-                            messagebox.showinfo("Sukces", "Klasa zaktualizowana pomyślnie.")
+                            messagebox.showinfo("Sukces", f"Klasa {class_name.get()} zaktualizowana pomyślnie.")
                             return
                         else:
                             return
@@ -367,7 +371,7 @@ def add_class():
             add_class_to_db(school_class)
             # refresh the table
             refresh_class_table()
-            messagebox.showinfo("Sukces", "Klasa dodana pomyślnie.")
+            messagebox.showinfo("Sukces", f"Klasa {class_name.get()} dodana pomyślnie.")
         except ValueError:
             messagebox.showerror("Błąd", "Liczba uczniów w klasie musi być liczbą całkowitą.")
             return
@@ -405,6 +409,64 @@ def add_class():
     mainPage.update()
 
 
+def delete():
+    # Function to create every section in deleting page
+    def create_section(parent, label_text, list_values, command_action, column):
+        # function to upgrade list when typing in entry
+        def update_list(event):
+            typed = entry.get()
+            listbox.delete(0, END)
+            filtered_values = [value for value in list_values if typed in str(value)]
+            for value in filtered_values:
+                listbox.insert(END, value)
+
+        label = Label(parent, text=label_text, **LABEL_STYLE)
+        label.grid(row=0, column=column, padx=10, pady=10, sticky="n")
+
+        entry = Entry(parent, **ENTRY_STYLE)
+        entry.grid(row=1, column=column, padx=10, pady=10)
+        entry.bind("<KeyRelease>", update_list)
+
+        listbox = Listbox(parent, **LISTBOX_STYLE)
+        listbox.grid(row=2, column=column, padx=10, pady=10)
+        for value in list_values:
+            listbox.insert(END, value)
+
+        # Button to delete selected item with command giving the selected item and the list of values
+        button = Button(parent, text=f"Usuń {label_text.lower()}", **BUTTON_STYLE, command=lambda: command_action(entry.get(),list_values))
+        button.grid(row=3, column=column, padx=10, pady=10)
+
+    mainPage.update()
+    clear_frame()
+
+    back_btn = button_back()
+    back_btn.place(x=10, y=10)
+
+    title = Label(content_frame, text="Usuń", **MAIN_LABEL_STYLE)
+    title.pack(pady=20)
+
+    unified_frame = Frame(content_frame, **FRAME_STYLE)
+    unified_frame.pack(pady=20)
+
+    # Create sections for deleting keys, lockers, and classes in a single frame
+    create_section(
+        unified_frame, "Klucz", [k.number for k in keysList], delete_key_action, column=0
+    )
+
+    create_section(
+        unified_frame, "Szafkę", [l.number for l in lockersList], delete_locker_action, column=1
+    )
+
+    create_section(
+        unified_frame, "Klasę", [c.name for c in classList], delete_class_action, column=2
+    )
+
+    mainPage.update()
+
+
+
+
+
 
 
 # Main window
@@ -421,7 +483,8 @@ def main():
     buttons = [
         ("Klucze", add_key),
         ("Szafki", add_locker),
-        ("Klasy", add_class)
+        ("Klasy", add_class),
+        ("Usuń", delete)
     ]
 
     for text, command in buttons:

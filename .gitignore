@@ -5,3 +5,5 @@
 dataBase/DataBase.db
 *.db
 dataBase/DataBase.db
+/actions/__pycache__
+.DS_Store
