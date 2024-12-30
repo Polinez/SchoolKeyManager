@@ -1,7 +1,6 @@
 # tkinter
 import re
 from tkinter import *
-from tkinter import messagebox
 from tkinter.ttk import Combobox
 
 # Database
@@ -15,23 +14,9 @@ from classes.locker import Locker
 from styles import *
 # actions
 from actions.actions import *
+# PDFs
+from fpdf import FPDF
 
-
-# Main window config
-mainPage = Tk()
-mainPage.title("Menadżer kluczy")
-mainPage.geometry("820x640")
-mainPage.configure(bg="white")
-mainPage.resizable(False, False)
-
-# main frame to hold all content
-content_frame = Frame(mainPage, **FRAME_STYLE)
-content_frame.pack(fill=BOTH, expand=True)
-
-# Lists of objects
-keysList = []
-classList = []
-lockersList = []
 
 
 
@@ -248,7 +233,7 @@ def add_locker():
                             # update db posiotion
                             update_locker_position_in_db(l)
                             # refresh table
-                            update_locker_table()
+                            refresh_locker_table()
                             messagebox.showinfo("Sukces", f"Szafka {number} zaktualizowana pomyślnie.")
                             return
                         else:
@@ -264,7 +249,7 @@ def add_locker():
             # adding to list
             lockersList.append(locker)
             # adding to table
-            update_locker_table()
+            refresh_locker_table()
             # adding to db
             add_locker_to_db(locker)
             messagebox.showinfo("Sukces", f"Szafka {number} dodana pomyślnie.")
@@ -300,14 +285,14 @@ def add_locker():
     locker_table.column("Klucz Przydzielony", width=150)
 
     # Display lockers in the table
-    def update_locker_table():
+    def refresh_locker_table():
         for item in locker_table.get_children():
             locker_table.delete(item)  # Remove existing entries
         for l in lockersList:
             locker_table.insert("", "end", values=(l.ID, l.number, l.room, str(l.position), "Przydzielony" if l.key_assigned else "Nie przydzielony"))
 
     mainPage.update()
-    update_locker_table()
+    refresh_locker_table()
 
 
 # Dodaj klase
@@ -409,61 +394,144 @@ def add_class():
     mainPage.update()
 
 
-def delete():
-    # Function to create every section in deleting page
-    def create_section(parent, label_text, list_values, command_action, column):
-        # function to upgrade list when typing in entry
-        def update_list(event):
-            typed = entry.get()
-            listbox.delete(0, END)
-            filtered_values = [value for value in list_values if typed in str(value)]
-            for value in filtered_values:
-                listbox.insert(END, value)
+# def delete():
+#     # Function to create every section in deleting page
+#     def create_section(parent, label_text, list_values, command_action, column):
+#         # function to upgrade list when typing in entry
+#         def update_list():
+#             typed = entry.get()
+#             listbox.delete(0, END)
+#             filtered_values = [value for value in list_values if typed in str(value)]
+#             for value in filtered_values:
+#                 listbox.insert(END, value)
+#
+#
+#         label = Label(parent, text=label_text, **LABEL_STYLE)
+#         label.grid(row=0, column=column, padx=10, pady=10, sticky="n")
+#
+#         entry = Entry(parent, **ENTRY_STYLE)
+#         entry.grid(row=1, column=column, padx=10, pady=10)
+#         entry.bind("<KeyRelease>",lambda event:update_list)
+#
+#         listbox = Listbox(parent, **LISTBOX_STYLE)
+#         listbox.grid(row=2, column=column, padx=10, pady=10)
+#         for value in list_values:
+#             listbox.insert(END, value)
+#
+#         # Button to delete selected item with command giving the selected item and the list of values
+#         button = Button(parent, text=f"Usuń {label_text.lower()}", **BUTTON_STYLE, command=lambda: delete_and_refresh(entry.get()))
+#         button.grid(row=3, column=column, padx=10, pady=10)
+#
+#         def delete_and_refresh(value):
+#             command_action(value)
+#
+#             listbox.delete(0, END)
+#             for value in list_values:
+#                 listbox.insert(END, value)
+#
+#
+#     mainPage.update()
+#     clear_frame()
+#
+#     back_btn = button_back()
+#     back_btn.place(x=10, y=10)
+#
+#     title = Label(content_frame, text="Usuń", **MAIN_LABEL_STYLE)
+#     title.pack(pady=20)
+#
+#     unified_frame = Frame(content_frame, **FRAME_STYLE)
+#     unified_frame.pack(pady=20)
+#
+#     # Create sections for deleting keys, lockers, and classes in a single frame
+#     create_section(
+#         unified_frame, "Klucz", [k.number for k in keysList], delete_key_action, column=0
+#     )
+#
+#     create_section(
+#         unified_frame, "Szafkę", [l.number for l in lockersList], delete_locker_action, column=1
+#     )
+#
+#     create_section(
+#         unified_frame, "Klasę", [c.name for c in classList], delete_class_action, column=2
+#     )
+#
+#     mainPage.update()
 
-        label = Label(parent, text=label_text, **LABEL_STYLE)
-        label.grid(row=0, column=column, padx=10, pady=10, sticky="n")
-
-        entry = Entry(parent, **ENTRY_STYLE)
-        entry.grid(row=1, column=column, padx=10, pady=10)
-        entry.bind("<KeyRelease>", update_list)
-
-        listbox = Listbox(parent, **LISTBOX_STYLE)
-        listbox.grid(row=2, column=column, padx=10, pady=10)
-        for value in list_values:
-            listbox.insert(END, value)
-
-        # Button to delete selected item with command giving the selected item and the list of values
-        button = Button(parent, text=f"Usuń {label_text.lower()}", **BUTTON_STYLE, command=lambda: command_action(entry.get(),list_values))
-        button.grid(row=3, column=column, padx=10, pady=10)
-
+def save_keys():
     mainPage.update()
     clear_frame()
-
     back_btn = button_back()
     back_btn.place(x=10, y=10)
-
-    title = Label(content_frame, text="Usuń", **MAIN_LABEL_STYLE)
+    title = Label(content_frame, text="Zapisz klucze do pliku", **MAIN_LABEL_STYLE)
     title.pack(pady=20)
 
-    unified_frame = Frame(content_frame, **FRAME_STYLE)
-    unified_frame.pack(pady=20)
+    label = Label(content_frame, text="Wybierz klasę", **LABEL_STYLE)
+    label.pack(pady=10)
 
-    # Create sections for deleting keys, lockers, and classes in a single frame
-    create_section(
-        unified_frame, "Klucz", [k.number for k in keysList], delete_key_action, column=0
-    )
+    class_name = Combobox(content_frame, values=["Wszystkie"]+[c.name for c in classList], state="readonly", **COMBOBOX_STYLE)
+    class_name.pack()
+    class_name.bind("<<ComboboxSelected>>", lambda event: refresh_key_table())
 
-    create_section(
-        unified_frame, "Szafkę", [l.number for l in lockersList], delete_locker_action, column=1
-    )
+    # saves keys to pdf
+    def save_keys_action(selected_class):
+        if selected_class == "Wszystkie":
+            keys = keysList
+        else:
+            keys = [k for k in keysList if k.keyclass == selected_class]
 
-    create_section(
-        unified_frame, "Klasę", [c.name for c in classList], delete_class_action, column=2
-    )
+        if not keys:
+            messagebox.showinfo("Info", "Brak kluczy do zapisu.")
+            return
 
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Arial", size=12)
+
+        pdf.cell(200, 10, txt="Lista Kluczy", ln=True, align='C')
+        pdf.ln(10)  # line break
+
+        for key in keys:
+            pdf.cell(0, 10, txt=f"Klucz: {key.number}, Przypisany do klasy: {key.keyclass}", ln=True)
+
+        try:
+            pdf_file = "klucze.pdf"
+            pdf.output(pdf_file)
+            messagebox.showinfo("Info",
+                                f"Klucze zostały zapisane do pliku {pdf_file} w folderze aplikacji. \nMożesz teraz je wydrukować.")
+        except Exception as e:
+            messagebox.showerror("Błąd", f"Wystąpił błąd podczas zapisu pliku PDF: {e}")
+
+
+
+    save_key = Button(content_frame, text="Zapisz", **BUTTON_STYLE, command=lambda: save_keys_action(class_name.get()))
+    save_key.pack(pady=20)
+
+
+    # tree view for displaying keys
+    key_table = Treeview(content_frame, columns=("Numer", "Przypisany do klasy"), show="headings",)
+    key_table.pack(fill=BOTH, expand=True, padx=250, pady=20)
+
+    # # Define columns and their headings
+    key_table.heading("Numer", text="Numer klucza")
+    key_table.heading("Przypisany do klasy", text="Przypisany do klasy/koszyka")
+
+    # Adjust column width
+    key_table.column("Numer", width=100)
+    key_table.column("Przypisany do klasy", width=100)
+
+    # Display keys in the table
+    def refresh_key_table():
+        for item in key_table.get_children():
+            key_table.delete(item)
+        for k in keysList:
+            if class_name.get() == "Wszystkie" or k.keyclass == class_name.get():
+                key_table.insert("", "end", values=(k.number, k.keyclass))
+
+
+
+
+    refresh_key_table()
     mainPage.update()
-
-
 
 
 
@@ -473,6 +541,8 @@ def delete():
 def main():
     mainPage.update()
     clear_frame()
+    classList, keysList, lockersList = import_from_db_to_lists()
+
     tytul = Label(content_frame, text="Menadżer kluczy", **MAIN_LABEL_STYLE)
     tytul.pack(pady=20)
 
@@ -484,7 +554,8 @@ def main():
         ("Klucze", add_key),
         ("Szafki", add_locker),
         ("Klasy", add_class),
-        ("Usuń", delete)
+        #("Usuń", delete),
+        ("Zapisz", save_keys)
     ]
 
     for text, command in buttons:
@@ -527,8 +598,22 @@ def main():
 
 # Główna pętla aplikacji
 if __name__ == "__main__":
+    # Main window config
+    mainPage = Tk()
+    mainPage.title("Menadżer kluczy")
+    mainPage.geometry("820x640")
+    mainPage.configure(bg="white")
+    mainPage.resizable(False, False)
+
+    # main frame to hold all content
+    content_frame = Frame(mainPage, **FRAME_STYLE)
+    content_frame.pack(fill=BOTH, expand=True)
+
+    # Create database
     create_db()
-    classList, keysList, lockersList = import_from_db_to_lists(classList, keysList, lockersList)
+    # Lists of objects
+    classList, keysList, lockersList = import_from_db_to_lists()
+    # Run
     main()
     mainPage.mainloop()
 

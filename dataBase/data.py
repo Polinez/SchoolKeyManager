@@ -35,8 +35,11 @@ def create_db():
         if conn:
             conn.close()
 
-def import_from_db_to_lists(classList: list, keysList: list, lockersList: list):
-
+def import_from_db_to_lists():
+    classList = []
+    lockersList = []
+    keysList = []
+    create_db()
     try:
         conn = sqlite3.connect('dataBase/DataBase.db')
         cursor = conn.cursor()
@@ -92,7 +95,20 @@ def update_class_in_db(school_class: Class):
         if conn:
             conn.close()
 
-def add_locker_to_db(locker):
+def delete_class_from_db(school_class: Class):
+    try:
+        conn = sqlite3.connect('dataBase/DataBase.db')
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM classes WHERE className = ?",
+                           (school_class.name,))
+        conn.commit()
+    except sqlite3.Error as e:
+        raise Exception("Błąd", f"Podczas usuwania klasy z bazy: {e}")
+    finally:
+        if conn:
+            conn.close()
+
+def add_locker_to_db(locker: Locker):
     try:
         conn = sqlite3.connect('dataBase/DataBase.db')
         cursor = conn.cursor()
@@ -101,6 +117,19 @@ def add_locker_to_db(locker):
         conn.commit()
     except sqlite3.Error as e:
         raise Exception("Błąd", f"Podczas dodawawania szafki do bazy: {e}")
+    finally:
+        if conn:
+            conn.close()
+
+def delete_locker_from_db(locker: Locker):
+    try:
+        conn = sqlite3.connect('dataBase/DataBase.db')
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM lockers WHERE number = ?",
+                           (locker.number,))
+        conn.commit()
+    except sqlite3.Error as e:
+        raise Exception("Błąd", f"Podczas usuwania szafki z bazy: {e}")
     finally:
         if conn:
             conn.close()
@@ -131,7 +160,7 @@ def update_locker_position_in_db(locker: Locker):
         if conn:
             conn.close()
 
-def add_key_to_db(key):
+def add_key_to_db(key: Key):
     try:
         conn = sqlite3.connect('dataBase/DataBase.db')
         cursor = conn.cursor()
@@ -169,4 +198,18 @@ def update_key_status_in_db(key: Key):
     finally:
         if conn:
             conn.close()
+
+def delete_key_from_db(key: Key):
+    try:
+        conn = sqlite3.connect('dataBase/DataBase.db')
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM keys WHERE number = ?",
+                           (key.number,))
+        conn.commit()
+    except sqlite3.Error as e:
+        raise Exception("Błąd", f"Podczas usuwania klucza z bazy: {e}")
+    finally:
+        if conn:
+            conn.close()
+
 

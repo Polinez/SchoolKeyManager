@@ -10,6 +10,9 @@ class Key():
     def __str__(self):
         return f"{self.__ID}.\t klucz:{self.__number},\t przypisany do:{self.__keyclass}\t status:{self.__status}"
 
+    def __eq__(self, other):
+        return self.__ID == other.ID
+
     def display_if_not_assigned(self):
         return f"Klucz oraz szafka nr:{self.__number} nie ma przydzielonej klasy."
 

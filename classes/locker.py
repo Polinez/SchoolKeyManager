@@ -11,6 +11,9 @@ class Locker():
     def __str__(self):
         return f"{self.__ID}.\t nr:{self.__number}\t pokoj:{self.__room}\t pozycja:{self.__position}\t" + (" klucz: Przydzielony" if self.__key_assigned else f" klucz: Nie przydzielony")
 
+    def __eq__(self, other):
+        return self.__ID == other.ID
+
     def display_if_key_not_assigned(self):
         return (f"Szafka nr {self.__number} w  {self.__room} o pozycji {self.__position} nie ma przydzielonego klucza.")
 
@@ -18,11 +21,7 @@ class Locker():
         self.__room=room
         self.__position=(row,column)
 
-    def changeStatus(self):
-        if self.__status=="Wolna":
-            self.__status="Zajęta"
-        else:
-            self.__status="Wolna"
+
 
     @property
     def ID(self):

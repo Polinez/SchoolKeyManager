@@ -13,6 +13,9 @@ class Class:
     def __str__(self):
         return f"{self.__ID}. {self.__className}, ilosc uczniow:{self.__numberOfStudents}"
 
+    def __eq__(self, other):
+        return self.__ID == other.ID
+
     @property
     def ID(self):
         return self.__ID
