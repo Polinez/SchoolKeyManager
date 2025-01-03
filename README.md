@@ -3,7 +3,10 @@
 ## 📚 Project Description
 This Python application, developed with the tkinter library, facilitates the management of keys, lockers, and school classes. The system aids in organizing space by allowing the assignment of keys to specific lockers and managing their availability.
 
-### Features
+### ✨ Features
+<details>
+<summary>Click to see the Features</summary>
+  
 Adding and Editing Keys:
 - Assign keys to lockers or classes.
 - Validate key numbers (4 digits, e.g., 1234).
@@ -24,7 +27,12 @@ Data Review and Management:
 - Dynamically refresh tables after changes.
 - Integration with an SQLite database.
 
+</details>
+
 ### ⚙️ Technologies Used
+<details>
+<summary>Click to see the Technologies</summary>
+  
 Python: Main programming language.
 
 Tkinter: GUI library for creating the user interface.
@@ -35,7 +43,9 @@ FPDF: Generating reports in PDF format (future feature).
 
 Modularity: Code divided into modules (actions, classes, database, styles) for easy management and development.
 
-### 🗂️ Struktura projektu
+</details>
+
+### 🗂️ Project Structure
 ```
 keyManager/
 │
