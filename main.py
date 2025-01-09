@@ -394,69 +394,6 @@ def add_class():
     mainPage.update()
 
 
-# def delete():
-#     # Function to create every section in deleting page
-#     def create_section(parent, label_text, list_values, command_action, column):
-#         # function to upgrade list when typing in entry
-#         def update_list():
-#             typed = entry.get()
-#             listbox.delete(0, END)
-#             filtered_values = [value for value in list_values if typed in str(value)]
-#             for value in filtered_values:
-#                 listbox.insert(END, value)
-#
-#
-#         label = Label(parent, text=label_text, **LABEL_STYLE)
-#         label.grid(row=0, column=column, padx=10, pady=10, sticky="n")
-#
-#         entry = Entry(parent, **ENTRY_STYLE)
-#         entry.grid(row=1, column=column, padx=10, pady=10)
-#         entry.bind("<KeyRelease>",lambda event:update_list)
-#
-#         listbox = Listbox(parent, **LISTBOX_STYLE)
-#         listbox.grid(row=2, column=column, padx=10, pady=10)
-#         for value in list_values:
-#             listbox.insert(END, value)
-#
-#         # Button to delete selected item with command giving the selected item and the list of values
-#         button = Button(parent, text=f"Usuń {label_text.lower()}", **BUTTON_STYLE, command=lambda: delete_and_refresh(entry.get()))
-#         button.grid(row=3, column=column, padx=10, pady=10)
-#
-#         def delete_and_refresh(value):
-#             command_action(value)
-#
-#             listbox.delete(0, END)
-#             for value in list_values:
-#                 listbox.insert(END, value)
-#
-#
-#     mainPage.update()
-#     clear_frame()
-#
-#     back_btn = button_back()
-#     back_btn.place(x=10, y=10)
-#
-#     title = Label(content_frame, text="Usuń", **MAIN_LABEL_STYLE)
-#     title.pack(pady=20)
-#
-#     unified_frame = Frame(content_frame, **FRAME_STYLE)
-#     unified_frame.pack(pady=20)
-#
-#     # Create sections for deleting keys, lockers, and classes in a single frame
-#     create_section(
-#         unified_frame, "Klucz", [k.number for k in keysList], delete_key_action, column=0
-#     )
-#
-#     create_section(
-#         unified_frame, "Szafkę", [l.number for l in lockersList], delete_locker_action, column=1
-#     )
-#
-#     create_section(
-#         unified_frame, "Klasę", [c.name for c in classList], delete_class_action, column=2
-#     )
-#
-#     mainPage.update()
-
 def save_keys():
     mainPage.update()
     clear_frame()
@@ -471,35 +408,6 @@ def save_keys():
     class_name = Combobox(content_frame, values=["Wszystkie"]+[c.name for c in classList], state="readonly", **COMBOBOX_STYLE)
     class_name.pack()
     class_name.bind("<<ComboboxSelected>>", lambda event: refresh_key_table())
-
-    # saves keys to pdf
-    def save_keys_action(selected_class):
-        if selected_class == "Wszystkie":
-            keys = keysList
-        else:
-            keys = [k for k in keysList if k.keyclass == selected_class]
-
-        if not keys:
-            messagebox.showinfo("Info", "Brak kluczy do zapisu.")
-            return
-
-        pdf = FPDF()
-        pdf.add_page()
-        pdf.set_font("Arial", size=12)
-
-        pdf.cell(200, 10, txt="Lista Kluczy", ln=True, align='C')
-        pdf.ln(10)  # line break
-
-        for key in keys:
-            pdf.cell(0, 10, txt=f"Klucz: {key.number}, Przypisany do klasy: {key.keyclass}", ln=True)
-
-        try:
-            pdf_file = "klucze.pdf"
-            pdf.output(pdf_file)
-            messagebox.showinfo("Info",
-                                f"Klucze zostały zapisane do pliku {pdf_file} w folderze aplikacji. \nMożesz teraz je wydrukować.")
-        except Exception as e:
-            messagebox.showerror("Błąd", f"Wystąpił błąd podczas zapisu pliku PDF: {e}")
 
 
 
@@ -527,9 +435,6 @@ def save_keys():
             if class_name.get() == "Wszystkie" or k.keyclass == class_name.get():
                 key_table.insert("", "end", values=(k.number, k.keyclass))
 
-
-
-
     refresh_key_table()
     mainPage.update()
 
@@ -541,10 +446,9 @@ def save_keys():
 def main():
     mainPage.update()
     clear_frame()
-    classList, keysList, lockersList = import_from_db_to_lists()
 
-    tytul = Label(content_frame, text="Menadżer kluczy", **MAIN_LABEL_STYLE)
-    tytul.pack(pady=20)
+    title = Label(content_frame, text="Menadżer kluczy", **MAIN_LABEL_STYLE)
+    title.pack(pady=20)
 
     # Frame for buttons
     button_frame = Frame(content_frame, **FRAME_STYLE)
@@ -554,7 +458,6 @@ def main():
         ("Klucze", add_key),
         ("Szafki", add_locker),
         ("Klasy", add_class),
-        #("Usuń", delete),
         ("Zapisz", save_keys)
     ]
 

@@ -1,9 +1,41 @@
 from tkinter import messagebox
+from fpdf import FPDF
 
-from dataBase.data import delete_key_from_db, update_locker_status_in_db, delete_locker_from_db, delete_class_from_db, \
-    import_from_db_to_lists
+from dataBase.data import delete_key_from_db, update_locker_status_in_db, delete_locker_from_db, delete_class_from_db,import_from_db_to_lists
 
-#TODO repair deleting 
+
+
+# saves keys to pdf
+def save_keys_action(selected_class):
+    classList, keysList, lockersList = import_from_db_to_lists()
+    if selected_class == "Wszystkie":
+        keys = keysList
+    else:
+        keys = [k for k in keysList if k.keyclass == selected_class]
+
+    if not keys:
+        messagebox.showinfo("Info", "Brak kluczy do zapisu.")
+        return
+
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+
+    pdf.cell(200, 10, txt="Lista Kluczy", ln=True, align='C')
+    pdf.ln(10)  # line break
+
+    for key in keys:
+        pdf.cell(0, 10, txt=f"Klucz: {key.number}, Przypisany do klasy: {key.keyclass}", ln=True)
+
+    try:
+        pdf_file = "klucze.pdf"
+        pdf.output(pdf_file)
+        messagebox.showinfo("Info",
+                        f"Klucze zostały zapisane do pliku {pdf_file} w folderze aplikacji. \nMożesz teraz je wydrukować.")
+    except Exception as e:
+        messagebox.showerror("Błąd", f"Wystąpił błąd podczas zapisu pliku PDF: {e}")
+
+
 
 # Deleting actions
 def delete_key_action(key_number:str):
