@@ -321,9 +321,11 @@ def add_class():
             if class_name.get() == "" or class_number.get() == "":
                 messagebox.showwarning("Brak danych", "Nie podano wszystkich danych.")
                 return
+
             if not re.match("^[0-9][A-Z]$", class_name.get()):
                 messagebox.showerror("Błąd", "Nazwa musi się składać z cyfry i dużej litery. np 1A, 2B.")
                 return
+            # check if user dont want to change number of students in class
             for c in classList:
                 if c.name == class_name.get():
                     if c.number_of_students == int(class_number.get()):
@@ -411,7 +413,6 @@ def save_keys():
 
     # saves keys to pdf
     def save_keys_action():
-        classList, keysList, lockersList = import_from_db_to_lists()
         if class_name.get() == "Wszystkie":
             keys = keysList
         else:
