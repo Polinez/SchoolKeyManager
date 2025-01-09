@@ -2,6 +2,7 @@
 import re
 from tkinter import *
 from tkinter.ttk import Combobox
+from tkinter import messagebox
 
 # Database
 from dataBase.data import *
@@ -12,8 +13,6 @@ from classes.schoolClass import Class
 from classes.locker import Locker
 # styles
 from styles import *
-# actions
-from actions.actions import *
 # PDFs
 from fpdf import FPDF
 
@@ -66,6 +65,7 @@ def add_key():
                 messagebox.showerror("Błąd", "Nie ma szafki do której pasowałby ten klucz.")
                 return
 
+            # handle if key is in class or if user want to change class of a assigned key
             for k in keysList:
                 if k.number == int(key_nr.get()):
                     if k.keyclass == key_class.get():
@@ -409,9 +409,38 @@ def save_keys():
     class_name.pack()
     class_name.bind("<<ComboboxSelected>>", lambda event: refresh_key_table())
 
+    # saves keys to pdf
+    def save_keys_action():
+        classList, keysList, lockersList = import_from_db_to_lists()
+        if class_name.get() == "Wszystkie":
+            keys = keysList
+        else:
+            keys = [k for k in keysList if k.keyclass == class_name.get()]
+
+        if not keys:
+            messagebox.showinfo("Info", "Brak kluczy do zapisu.")
+            return
+
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Arial", size=12)
+
+        pdf.cell(200, 10, txt="Lista Kluczy", ln=True, align='C')
+        pdf.ln(10)  # line break
+
+        for key in keys:
+            pdf.cell(0, 10, txt=f"Klucz: {key.number}, Przypisany do klasy: {key.keyclass}", ln=True)
+
+        try:
+            pdf_file = "klucze.pdf"
+            pdf.output(pdf_file)
+            messagebox.showinfo("Info",
+                                f"Klucze zostały zapisane do pliku {pdf_file} w folderze aplikacji. \nMożesz teraz je wydrukować.")
+        except Exception as e:
+            messagebox.showerror("Błąd", f"Wystąpił błąd podczas zapisu pliku PDF: {e}")
 
 
-    save_key = Button(content_frame, text="Zapisz", **BUTTON_STYLE, command=lambda: save_keys_action(class_name.get()))
+    save_key = Button(content_frame, text="Zapisz", **BUTTON_STYLE, command= save_keys_action)
     save_key.pack(pady=20)
 
 
