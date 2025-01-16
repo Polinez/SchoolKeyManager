@@ -11,3 +11,4 @@ klucze.pdf
 /build
 /dist
 main.spec
+*.pdf

@@ -15,8 +15,7 @@ from classes.locker import Locker
 from styles import *
 # PDFs
 from fpdf import FPDF
-
-
+from save_to_PDF import save_to_pdf
 
 
 def clear_frame():
@@ -36,6 +35,27 @@ def add_key():
     back_btn.place(x=10, y=10)
     title = Label(content_frame, text="Dodaj/Edytuj klucz", **MAIN_LABEL_STYLE)
     title.pack(pady=20)
+
+    def find_key_action():
+        if key_nr.get() == "":
+            messagebox.showwarning("Brak danych", "Nie podano numeru klucza do wyszukania.")
+            return
+
+        if len(key_nr.get()) != 4:
+            messagebox.showerror("Błąd", "Numer klucza musi się składać z 4 cyfr np. 1234")
+            return
+
+        for key in keysList:
+            if int(key_nr.get()) == key.number:
+                messagebox.showinfo("Pozycja klucza", f"Klucz który szukasz jest przypisany do: {key.keyclass}.")
+                return
+        else:
+            messagebox.showwarning("Brak klucza", "Nie ma szafki o takim numerze.")
+            return
+
+
+    find_locker_btn = Button(content_frame, text="Znajdz klucz", **BUTTON_STYLE, command=find_key_action)
+    find_locker_btn.place(x=660, y=10)
 
     key_nr_lb = Label(content_frame, text="Numer klucza", **LABEL_STYLE)
     key_nr_lb.pack(pady=10)
@@ -65,7 +85,7 @@ def add_key():
                 messagebox.showerror("Błąd", "Nie ma szafki do której pasowałby ten klucz.")
                 return
 
-            # handle if key is in class or if user want to change class of a assigned key
+            # handle if key is in class or if user want to change class of an assigned key
             for k in keysList:
                 if k.number == int(key_nr.get()):
                     if k.keyclass == key_class.get():
@@ -166,6 +186,27 @@ def add_locker():
     title = Label(content_frame, text="Dodaj/Edytuj szafkę", **MAIN_LABEL_STYLE)
     title.pack(pady=20)
 
+    def find_locker_action():
+        if locker_nr.get() == "":
+            messagebox.showwarning("Brak danych", "Nie podano numeru szafki do wyszukania.")
+            return
+
+        if len(locker_nr.get()) != 4:
+            messagebox.showerror("Błąd", "Numer szafki musi się składać z 4 cyfr np. 1234")
+            return
+
+        for locker in lockersList:
+            if int(locker_nr.get()) == locker.number:
+                messagebox.showinfo("Pozycja szafki", f"Szafka której szukasz jest w : {locker.room}\npozycja: {locker.position[0]}, kolumna: {locker.position[1]}")
+                return
+        else:
+            messagebox.showwarning("Brak szafki", "Nie ma szafki o takim numerze.")
+            return
+
+
+    find_locker_btn = Button(content_frame, text="Znajdz szafke", **BUTTON_STYLE, command=find_locker_action)
+    find_locker_btn.place(x=650, y=10)
+
     locker_nr_label = Label(content_frame, text="Numer szafki", **LABEL_STYLE)
     locker_nr_label.pack(pady=10)
     locker_nr = Entry(content_frame, **ENTRY_STYLE)
@@ -178,14 +219,14 @@ def add_locker():
     # Room
     locker_room_label = Label(locker_details_frame, text="Sala", **LABEL_STYLE)
     locker_room_label.grid(row=0, column=0, padx=5, pady=10, sticky="n", columnspan=2)
-    locker_room = Combobox(locker_details_frame, values=["Szkoła Podstawowa", "Liceum"], state="readonly",**COMBOBOX_STYLE)
+    locker_room = Combobox(locker_details_frame, values=["Szkola Podstawowa", "Liceum"], state="readonly",**COMBOBOX_STYLE)
     locker_room.grid(row=1, column=0, padx=5, columnspan=2)
     locker_room.current(0)
 
     # ROW
     locker_row_label = Label(locker_details_frame, text="Rząd", **LABEL_STYLE)
     locker_row_label.grid(row=0, column=2, padx=5, pady=10, sticky="n", columnspan=2)
-    locker_row = Combobox(locker_details_frame, values=["Góra", "Dół"], state="readonly", **COMBOBOX_STYLE)
+    locker_row = Combobox(locker_details_frame, values=["Gora", "Dol"], state="readonly", **COMBOBOX_STYLE)
     locker_row.grid(row=1, column=2, padx=5,  columnspan=2)
     locker_row.current(0)
 
@@ -264,7 +305,11 @@ def add_locker():
     locker_button.pack(pady=20)
 
     locker_list_label = Label(content_frame, text="Lista szafek", **MAIN_LABEL_STYLE)
-    locker_list_label.pack(pady=20)
+    locker_list_label.pack()
+
+
+    save_lockers_btn = Button(content_frame, text="Zapisz szafki do PDF", **BUTTON_STYLE,command=save_to_pdf.save_lockers_action)
+    save_lockers_btn.pack(pady=10)
 
     # Treeview for lockers
     locker_table = Treeview(content_frame, columns=("ID", "Numer", "Pokój", "Pozycja", "Klucz Przydzielony"), show="headings",)
@@ -325,7 +370,7 @@ def add_class():
             if not re.match("^[0-9][A-Z]$", class_name.get()):
                 messagebox.showerror("Błąd", "Nazwa musi się składać z cyfry i dużej litery. np 1A, 2B.")
                 return
-            # check if user dont want to change number of students in class
+            # check if user don't want to change number of students in class
             for c in classList:
                 if c.name == class_name.get():
                     if c.number_of_students == int(class_number.get()):
@@ -401,7 +446,7 @@ def save_keys():
     clear_frame()
     back_btn = button_back()
     back_btn.place(x=10, y=10)
-    title = Label(content_frame, text="Zapisz klucze do pliku", **MAIN_LABEL_STYLE)
+    title = Label(content_frame, text="Zapisz klucze do pliku PDF", **MAIN_LABEL_STYLE)
     title.pack(pady=20)
 
     label = Label(content_frame, text="Wybierz klasę", **LABEL_STYLE)
@@ -411,37 +456,8 @@ def save_keys():
     class_name.pack()
     class_name.bind("<<ComboboxSelected>>", lambda event: refresh_key_table())
 
-    # saves keys to pdf
-    def save_keys_action():
-        if class_name.get() == "Wszystkie":
-            keys = keysList
-        else:
-            keys = [k for k in keysList if k.keyclass == class_name.get()]
 
-        if not keys:
-            messagebox.showinfo("Info", "Brak kluczy do zapisu.")
-            return
-
-        pdf = FPDF()
-        pdf.add_page()
-        pdf.set_font("Arial", size=12)
-
-        pdf.cell(200, 10, txt="Lista Kluczy", ln=True, align='C')
-        pdf.ln(10)  # line break
-
-        for key in keys:
-            pdf.cell(0, 10, txt=f"Klucz: {key.number}, Przypisany do klasy: {key.keyclass}", ln=True)
-
-        try:
-            pdf_file = "klucze.pdf"
-            pdf.output(pdf_file)
-            messagebox.showinfo("Info",
-                                f"Klucze zostały zapisane do pliku {pdf_file} w folderze aplikacji. \nMożesz teraz je wydrukować.")
-        except Exception as e:
-            messagebox.showerror("Błąd", f"Wystąpił błąd podczas zapisu pliku PDF: {e}")
-
-
-    save_key = Button(content_frame, text="Zapisz", **BUTTON_STYLE, command= save_keys_action)
+    save_key = Button(content_frame, text="Zapisz", **BUTTON_STYLE, command=lambda: save_to_pdf.save_keys_action(class_name))
     save_key.pack(pady=20)
 
 
@@ -477,7 +493,7 @@ def main():
     mainPage.update()
     clear_frame()
 
-    title = Label(content_frame, text="Menadżer kluczy", **MAIN_LABEL_STYLE)
+    title = Label(content_frame, text="Menedżer kluczy", **MAIN_LABEL_STYLE)
     title.pack(pady=20)
 
     # Frame for buttons
@@ -488,7 +504,7 @@ def main():
         ("Klucze", add_key),
         ("Szafki", add_locker),
         ("Klasy", add_class),
-        ("Zapisz", save_keys)
+        ("Zapisz klucze", save_keys)
     ]
 
     for text, command in buttons:
@@ -533,7 +549,7 @@ def main():
 if __name__ == "__main__":
     # Main window config
     mainPage = Tk()
-    mainPage.title("Menadżer kluczy")
+    mainPage.title("Menedżer kluczy")
     mainPage.geometry("820x640")
     mainPage.configure(bg="white")
     mainPage.resizable(False, False)
@@ -544,7 +560,7 @@ if __name__ == "__main__":
 
     # Create database
     create_db()
-    # Lists of objects
+    # importing list of objects form database
     classList, keysList, lockersList = import_from_db_to_lists()
     # Run
     main()

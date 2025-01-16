@@ -1,6 +1,8 @@
 altgraph==0.17.4
 chardet==5.2.0
-fpdf==1.7.2
+defusedxml==0.7.1
+fonttools==4.55.3
+fpdf2==2.8.2
 macholib==1.16.3
 packaging==24.2
 pillow==11.0.0
