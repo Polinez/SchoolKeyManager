@@ -42,7 +42,10 @@ def add_key():
 
 
     find_locker_btn = Button(content_frame, text="Znajdz klucz", **BUTTON_STYLE, command=lambda :keys_actions.find_key_action(key_nr))
-    find_locker_btn.place(x=660, y=10)
+    find_locker_btn.pack(pady=10)
+    mainPage.update()
+    # changing position of find locker button after window update because it broke when we do it before
+    find_locker_btn.place(x=mainPage.winfo_width() - find_locker_btn.winfo_width() -10, y=10)
 
     key_nr_lb = Label(content_frame, text="Numer klucza", **LABEL_STYLE)
     key_nr_lb.pack(pady=10)
@@ -97,7 +100,10 @@ def add_locker():
 
 
     find_locker_btn = Button(content_frame, text="Znajdz szafke", **BUTTON_STYLE, command=lambda :lockers_actions.find_locker_action(locker_nr))
-    find_locker_btn.place(x=650, y=10)
+    find_locker_btn.pack(pady=10)
+    # changing position of find locker button after window update because it broke when we do it before
+    mainPage.update()
+    find_locker_btn.place(x=mainPage.winfo_width() - find_locker_btn.winfo_width() -10, y=10)
 
     locker_nr_label = Label(content_frame, text="Numer szafki", **LABEL_STYLE)
     locker_nr_label.pack(pady=10)
