@@ -47,26 +47,34 @@ Modularity: Code divided into modules (actions, classes, database, styles) for e
 
 ### 🗂️ Project Structure
 ```
-keyManager/
+SchoolKeyMenager/
 │
-├── main.py                     # Main application file
+├── main.py    # main folder 
 |
+├── actions/                # all actions like save/add/refresh
+│   ├── class_actions.py    
+│   ├── keys_actions.py     
+│   ├── lockers_actions.py 
+│   └── main_actions.py     
+│
+├── classes/                # all class objects of keys/lockers/schoolClasses
+│   ├── key.py          
+│   ├── locker.py        
+│   └── schoolClass.py      
+│
 ├── dataBase/
 │   ├── data.py                 # Database operations
 |   └── DataBase.db             # SQLite database
 │
-├── classes/
-│   ├── key.py                  # Class representing a key
-│   ├── locker.py               # Class representing a locker
-│   ├── schoolClass.py          # Class representing a school class
-│
+├── keyicon.ico             # app icon
+├── lists.py                # lists of objects of keys/lockers/classes              
 ├── styles.py                   # GUI style definitions
 │
 ├── requirements.txt            # Dependency list
 └── README.md                   # Project documentation
 ```
 
-<img width="800" alt="Main Menu" src="https://github.com/user-attachments/assets/43960274-70d0-4895-9363-448edbc9f221" />
+<img width="816" alt="Main Menu" src="https://github.com/user-attachments/assets/b97ac4bd-39b8-422c-bf6a-889474a6c148" />
 
 
 ## 🚀 How to Run the Application
