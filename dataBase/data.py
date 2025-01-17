@@ -5,7 +5,6 @@ from classes.schoolClass import Class
 from classes.key import Key
 
 
-
 def create_db():
     try:
         conn = sqlite3.connect('dataBase/DataBase.db')

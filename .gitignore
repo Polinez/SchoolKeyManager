@@ -12,3 +12,4 @@ klucze.pdf
 /dist
 main.spec
 *.pdf
+/dataBase/__pycache__

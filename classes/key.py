@@ -1,4 +1,4 @@
-class Key():
+class Key:
     id=0
     def __init__(self, number:int,keyclass:str,status:str):
         Key.id+=1

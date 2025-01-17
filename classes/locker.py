@@ -1,4 +1,4 @@
-class Locker():
+class Locker:
     id=0
     def __init__(self, number:int,room:str,row:str,column:int,key_assigned:bool):
         Locker.id+=1
@@ -15,7 +15,7 @@ class Locker():
         return self.__ID == other.ID
 
     def display_if_key_not_assigned(self):
-        return (f"Szafka nr {self.__number} w  {self.__room} o pozycji {self.__position} nie ma przydzielonego klucza.")
+        return f"Szafka nr {self.__number} w  {self.__room} o pozycji {self.__position} nie ma przydzielonego klucza."
 
     def changePosition(self,room:str,row:str,column:int):
         self.__room=room
