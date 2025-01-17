@@ -105,7 +105,7 @@ def find_key_action(key_nr):
             messagebox.showinfo("Pozycja klucza", f"Klucz który szukasz jest przypisany do: {key.keyclass}.")
             return
     else:
-        messagebox.showwarning("Brak klucza", "Nie ma szafki o takim numerze.")
+        messagebox.showwarning("Brak klucza", "Nie ma klucza o takim numerze.")
         return
 
 
