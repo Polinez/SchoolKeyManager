@@ -212,3 +212,15 @@ def delete_key_from_db(key: Key):
             conn.close()
 
 
+def update_locker_in_db(old_number,locker: Locker):
+    try:
+        conn = sqlite3.connect('dataBase/DataBase.db')
+        cursor = conn.cursor()
+        cursor.execute("UPDATE lockers SET number = ? WHERE number = ?",
+                                    (locker.number, old_number))
+        conn.commit()
+    except sqlite3.Error as e:
+        raise Exception("Błąd", f"Podczas aktualizowania szafki w bazie: {e}")
+    finally:
+        if conn:
+            conn.close()

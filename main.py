@@ -117,14 +117,14 @@ def add_locker():
     # Room
     locker_room_label = Label(locker_details_frame, text="Sala", **LABEL_STYLE)
     locker_room_label.grid(row=0, column=0, padx=5, pady=10, sticky="n", columnspan=2)
-    locker_room = Combobox(locker_details_frame, values=["Szkola Podstawowa", "Liceum"], state="readonly",**COMBOBOX_STYLE)
+    locker_room = Combobox(locker_details_frame, values=["Szkoła Podstawowa", "Liceum"], state="readonly",**COMBOBOX_STYLE)
     locker_room.grid(row=1, column=0, padx=5, columnspan=2)
     locker_room.current(0)
 
     # ROW
     locker_row_label = Label(locker_details_frame, text="Rząd", **LABEL_STYLE)
     locker_row_label.grid(row=0, column=2, padx=5, pady=10, sticky="n", columnspan=2)
-    locker_row = Combobox(locker_details_frame, values=["Gora", "Dol"], state="readonly", **COMBOBOX_STYLE)
+    locker_row = Combobox(locker_details_frame, values=["Góra", "Dół"], state="readonly", **COMBOBOX_STYLE)
     locker_row.grid(row=1, column=2, padx=5,  columnspan=2)
     locker_row.current(0)
 
@@ -259,6 +259,73 @@ def save_keys():
     mainPage.update()
 
 
+def change_locker():
+    mainPage.update()
+    clear_frame()
+
+    # Przycisk powrotu
+    back_btn = button_back()
+    back_btn.place(x=10, y=10)
+
+    # Tytuł
+    title = Label(content_frame, text="Zmień zamek w szafce", **MAIN_LABEL_STYLE)
+    title.pack(pady=20)
+
+    # buttons frame
+    buttons_frame = Frame(content_frame, **FRAME_STYLE)
+    buttons_frame.pack(pady=20)
+
+    # locker 1 frame
+    buton1_frame = Frame(buttons_frame, **FRAME_STYLE)
+    buton1_frame.pack(side=LEFT, padx=20)
+    # locker 2 frame
+    buton2_frame = Frame(buttons_frame, **FRAME_STYLE)
+    buton2_frame.pack(side=LEFT, padx=20)
+
+
+    # Elements of locker 1 frame
+    old_locker_label = Label(buton1_frame, text="STARY numer szafki", **LABEL_STYLE)
+    old_locker_label.pack(pady=10)
+
+    old_locker_nr = Entry(buton1_frame, **ENTRY_STYLE)
+    old_locker_nr.pack()
+
+    # Elements of locker 2 frame
+    new_locker_label = Label(buton2_frame, text="NOWY numer szafki", **LABEL_STYLE)
+    new_locker_label.pack(pady=10)
+
+    new_locker_nr = Entry(buton2_frame, **ENTRY_STYLE)
+    new_locker_nr.pack()
+
+
+    # Elements of locker position
+    locker_room_label = Label(content_frame, text="Sala", **LABEL_STYLE)
+    locker_room_label.pack(pady=10)
+
+    locker_room = Combobox(content_frame, values=["Szkoła Podstawowa", "Liceum"], state="readonly", **COMBOBOX_STYLE)
+    locker_room.pack()
+    locker_room.current(0)
+
+    locker_row_label = Label(content_frame, text="Rząd", **LABEL_STYLE)
+    locker_row_label.pack(pady=10)
+
+    locker_row = Combobox(content_frame, values=["Góra", "Dół"], state="readonly", **COMBOBOX_STYLE)
+    locker_row.pack()
+    locker_row.current(0)
+
+    locker_column_label = Label(content_frame, text="Kolumna", **LABEL_STYLE)
+    locker_column_label.pack(pady=10)
+
+    locker_column = Entry(content_frame, **ENTRY_STYLE)
+    locker_column.pack()
+
+
+    change_locker_btn = Button(content_frame, text="Zmień zamek", **BUTTON_STYLE, command=lambda: lockers_actions.change_locker_nr_action(old_locker_nr, new_locker_nr, locker_room, locker_row, locker_column))
+    change_locker_btn.pack(pady=20)
+
+    mainPage.update()
+
+
 
 # Main window
 def main():
@@ -276,7 +343,8 @@ def main():
         ("Klucze", add_key),
         ("Szafki", add_locker),
         ("Klasy", add_class),
-        ("Zapisz klucze", save_keys)
+        ("Zapisz klucze", save_keys),
+        ("Zmień zamek", change_locker)
     ]
 
     for text, command in buttons:

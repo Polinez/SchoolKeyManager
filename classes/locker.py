@@ -1,3 +1,6 @@
+import re
+
+
 class Locker:
     id=0
     def __init__(self, number:int,room:str,row:str,column:int,key_assigned:bool):
@@ -30,6 +33,12 @@ class Locker:
     @property
     def number(self):
         return self.__number
+
+    @number.setter
+    def number(self,number):
+        if not re.match("^[0-9]{4}$", str(number)):
+            raise Exception("Błąd", "Numer szafki musi się składać z 4 cyfry np. 1234")
+        self.__number=number
 
     @property
     def room(self):

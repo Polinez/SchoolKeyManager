@@ -122,3 +122,35 @@ def save_lockers_action():
             f"Szafki zostały zapisane do pliku {pdf_file} w folderze aplikacji. \nMożesz teraz je wydrukować.")
     except Exception as e:
         messagebox.showerror("Błąd", f"Wystąpił błąd podczas zapisu pliku PDF: {e}")
+
+
+def change_locker_nr_action(old_locker_nr, new_locker_nr, locker_room, locker_row, locker_column):
+    if old_locker_nr.get() == "" or new_locker_nr.get() == "":
+        messagebox.showwarning("Brak danych", "Nie podano numeru szafki do zmiany.")
+        return
+
+    if not re.match("^[0-9]{4}$", old_locker_nr.get()) or not re.match("^[0-9]{4}$", new_locker_nr.get()):
+        messagebox.showerror("Błąd", "Numer szafki musi się składać z 4 cyfr np. 1234")
+        return
+
+    for l in lockersList:
+        if l.number == int(old_locker_nr.get()):
+            if locker_room.get() != l.room or locker_row.get() != l.position[0] or int(locker_column.get()) != int(l.position[1]):
+                messagebox.showerror("Błąd", f"Pozycja która podałeś nie zgadza sie z pozycja szafki nr {old_locker_nr.get()}.")
+                return
+
+            if l.number == int(new_locker_nr.get()):
+                messagebox.showerror("Błąd", "Nowy numer szafki jest taki sam jak stary.")
+                return
+            else:
+                for l2 in lockersList:
+                    if l2.number == int(new_locker_nr.get()):
+                        messagebox.showerror("Błąd", "Szafka o takim numerze już istnieje.")
+                        return
+                l.number = int(new_locker_nr.get())
+                # update db
+                update_locker_in_db(old_locker_nr.get(),l)
+                messagebox.showinfo("Sukces", f"Numer szafki {old_locker_nr.get()} został zmieniony na {new_locker_nr.get()}.")
+                return
+    else:
+        messagebox.showerror("Błąd", f"Nie ma szafki o numerze {old_locker_nr.get()}.")
