@@ -62,5 +62,7 @@ class Locker:
 
     @key_assigned.setter
     def key_assigned(self,key_assigned):
+        if not isinstance(key_assigned,bool):
+            raise Exception("Błąd", "Przydzielony klucz musi być wartością logiczną.")
         self.__key_assigned=key_assigned
 

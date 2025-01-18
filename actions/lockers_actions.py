@@ -6,7 +6,7 @@ from unidecode import unidecode
 from dataBase.data import *
 
 # lists
-from lists import lockersList
+from lists import lockersList, keysList
 
 
 # Display lockers in the table
@@ -133,6 +133,12 @@ def change_locker_nr_action(old_locker_nr, new_locker_nr, locker_room, locker_ro
         messagebox.showerror("Błąd", "Numer szafki musi się składać z 4 cyfr np. 1234")
         return
 
+    for k in keysList:
+        if k.number == int(old_locker_nr.get()):
+            deleteKey=messagebox.askyesno("Uwaga", f"Klucz {k.number} jest przypisany do klasy {k.keyclass}. Czy na pewno chcesz zmienić numer szafki?\nPowoduje to usunięcie klucza {k.number}.")
+            if not deleteKey:
+                return
+
     for l in lockersList:
         if l.number == int(old_locker_nr.get()):
             if locker_room.get() != l.room or locker_row.get() != l.position[0] or int(locker_column.get()) != int(l.position[1]):
@@ -148,9 +154,13 @@ def change_locker_nr_action(old_locker_nr, new_locker_nr, locker_room, locker_ro
                         messagebox.showerror("Błąd", "Szafka o takim numerze już istnieje.")
                         return
                 l.number = int(new_locker_nr.get())
+                l.key_assigned=False
                 # update db
-                update_locker_in_db(old_locker_nr.get(),l)
-                messagebox.showinfo("Sukces", f"Numer szafki {old_locker_nr.get()} został zmieniony na {new_locker_nr.get()}.")
+                update_locker_and_delete_key_in_db(old_locker_nr.get(),l)
+                # deleting key from list
+                keysList[:] = [k for k in keysList if k.number != int(old_locker_nr.get())]
+
+                messagebox.showinfo("Sukces", f"Numer szafki {old_locker_nr.get()} został zmieniony na {new_locker_nr.get()}.\nKlucz {old_locker_nr.get()} został usuniety.\nDodaj klucz do nowej szafki!!!")
                 return
     else:
         messagebox.showerror("Błąd", f"Nie ma szafki o numerze {old_locker_nr.get()}.")
