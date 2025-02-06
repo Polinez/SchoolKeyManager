@@ -204,7 +204,7 @@ def update_locker_and_delete_key_in_db(old_number,locker: Locker):
     try:
         conn = sqlite3.connect('dataBase/DataBase.db')
         cursor = conn.cursor()
-        cursor.execute("UPDATE lockers SET number = ? WHERE number = ?",
+        cursor.execute("UPDATE lockers SET number = ?, status = 0 WHERE number = ?",
                                     (locker.number, old_number))
         cursor.execute("DELETE FROM keys WHERE number = ?",
                            (old_number,))
