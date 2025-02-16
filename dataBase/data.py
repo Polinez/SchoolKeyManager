@@ -1,3 +1,4 @@
+import os
 import sqlite3
 
 from classes.locker import Locker
@@ -7,7 +8,15 @@ from classes.key import Key
 
 def create_db():
     try:
-        conn = sqlite3.connect('dataBase/DataBase.db')
+        # Path to database
+        db_path = 'dataBase/DataBase.db'
+        db_dir = os.path.dirname(db_path)
+
+        # Create database if not exists
+        if not os.path.exists(db_dir):
+            os.makedirs(db_dir)
+
+        conn = sqlite3.connect(db_path)
         cursor = conn.cursor()
         cursor.execute('''CREATE TABLE IF NOT EXISTS classes
                         (id INTEGER PRIMARY KEY,

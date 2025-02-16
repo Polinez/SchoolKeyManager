@@ -1,0 +1,72 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'  # To upload a new release, push a tag with the format v1.2.3
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+
+    steps:
+    # Checkout repo
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # extract version from the tag and save it to the environment variable as -> ${{ env.VERSION }}
+    - name: Extract version from Github tag
+      id: get_version
+      run: |
+        # Remove 'v' prefix 
+        TAG=${GITHUB_REF#refs/tags/v}
+        echo "VERSION=$TAG" >> $GITHUB_ENV
+
+    # Install Python and dependencies
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.13"
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller
+        pip install -r requirements.txt
+
+    # Build the application
+    - name: Build application with PyInstaller
+      run: |
+        pyinstaller --onefile --windowed --add-data "actions;actions" --add-data "classes;classes" --add-data "dataBase;dataBase" --add-data "keyicon.ico;." --add-data "lists.py;." --add-data "styles.py;." --icon=keyicon.ico --name=menedzerKluczy main.py
+
+    # Upload the built application as an artifact
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: application
+        path: dist/menedzerKluczy.exe
+
+    # Create a release and upload the executable
+    - name: Create GitHub Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ env.VERSION }}
+        release_name: "v${{ env.VERSION }} Latest"
+        body: |
+          Release on Win / Intelx86 CPU
+
+        draft: false
+        prerelease: false
+
+    - name: Upload to Release
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: dist/menedzerKluczy.exe
+        asset_name: menedzerKluczy.exe
+        asset_content_type: application/octet-stream

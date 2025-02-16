@@ -1,3 +1,4 @@
+import os
 import re
 from tkinter import messagebox
 from fpdf import FPDF
@@ -116,7 +117,9 @@ def save_lockers_action():
         pdf.cell(0, 4, unidecode(locker_text), new_x="LMARGIN", new_y="NEXT")
 
     try:
-        pdf_file = "szafki.pdf"
+        output_dir = "PDF"
+        pdf_file = os.path.join(output_dir, "szafki.pdf")
+        os.makedirs(output_dir, exist_ok=True)
         pdf.output(pdf_file)
         messagebox.showinfo("Info",
             f"Szafki zostały zapisane do pliku {pdf_file} w folderze aplikacji. \nMożesz teraz je wydrukować.")

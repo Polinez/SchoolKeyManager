@@ -1,3 +1,4 @@
+import os
 import re
 from tkinter import messagebox
 # pdf
@@ -135,7 +136,9 @@ def save_keys_action(class_name):
         pdf.cell(0, 4, unidecode(key_text), new_x="LMARGIN", new_y="NEXT")
 
     try:
-        pdf_file = "klucze.pdf"
+        output_dir = "PDF"
+        pdf_file = os.path.join(output_dir, "klucze.pdf")
+        os.makedirs(output_dir, exist_ok=True)
         pdf.output(pdf_file)
         messagebox.showinfo("Info",
             f"Klucze zostały zapisane do pliku {pdf_file} w folderze aplikacji. \nMożesz teraz je wydrukować.")

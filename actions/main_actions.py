@@ -1,3 +1,4 @@
+import os.path
 from tkinter import messagebox
 # pdf
 from fpdf import FPDF
@@ -48,7 +49,9 @@ def save_errors_action():
             pdf.cell(0, 4, unidecode(key_text), new_x="LMARGIN", new_y="NEXT")
 
     try:
-        pdf_file = "bledy.pdf"
+        output_dir = "PDF"
+        pdf_file = os.path.join(output_dir,"bledy.pdf")
+        os.makedirs(output_dir, exist_ok=True)
         pdf.output(pdf_file)
         messagebox.showinfo("Info",
                             f"Bledy zostały zapisane do pliku {pdf_file} w folderze aplikacji. \nMożesz teraz je wydrukować.")
