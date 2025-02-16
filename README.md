@@ -92,4 +92,5 @@ The link provides two versions:
 The application was created by Sebastian Wandzel as a tool to support the organization managing school keys and as a final project for Python Programming coursework.
 
 ## License
-The project is released under the MIT license. Details can be found in the LICENSE file.
+This software is proprietary and not open-source. Unauthorized use is prohibited. For licensing inquiries, please contact sebastianwandzel@yahoo.pl.
+
