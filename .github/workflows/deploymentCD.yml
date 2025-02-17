@@ -2,8 +2,10 @@ name: Build and Release
 
 on:
   push:
-    tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'  # To upload a new release, push a tag with the format v1.2.3
+    branches:
+      - main
+#    tags:
+#      - 'v[0-9]+.[0-9]+.[0-9]+'  # To upload a new release, push a tag with the format v1.2.3
 
 jobs:
   build-and-release:
