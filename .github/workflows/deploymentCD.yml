@@ -43,7 +43,7 @@ jobs:
 
     # Upload the built application as an artifact
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: application
         path: dist/menedzerKluczy.exe
