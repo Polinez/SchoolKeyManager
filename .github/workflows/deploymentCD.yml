@@ -18,12 +18,21 @@ jobs:
     - name: Extract version from Github tag
       id: get_version
       run: |
-        # remove the 'v' prefix from the tag
         $TAG = $env:GITHUB_REF -replace '^refs/tags/v', ''
         echo "VERSION=$TAG" >> $env:GITHUB_ENV
-      
 
-      # Install Python and dependencies
+    # Fetch release data to find upload_url
+    - name: Get release by tag
+      id: get_release
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+      run: |
+        echo "Fetching release for tag v${{ env.VERSION }}"
+        $release = Invoke-RestMethod -Headers @{Authorization = "Bearer $env:GITHUB_TOKEN"} `
+                  -Uri "https://api.github.com/repos/${{ github.repository }}/releases/tags/v${{ env.VERSION }}"
+        echo "upload_url=$($release.upload_url -replace '{.*}', '')" >> $env:GITHUB_ENV
+
+    # Set up Python environment and install dependencies
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
@@ -47,17 +56,17 @@ jobs:
         name: application
         path: dist/menedzerKluczy.exe
 
-
- # Upload the executable to an existing release
+    # Upload the executable to the release
     - name: Upload to existing Release
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       with:
-        upload_url: ${{ github.event.release.upload_url || github.event.release.html_url }}
+        upload_url: ${{ env.upload_url }}
         asset_path: dist/menedzerKluczy.exe
         asset_name: menedzerKluczy.exe
         asset_content_type: application/octet-stream
+
 
 # its a version for creating release by -> git tag v0.2.4  git push origin v0.2.4
 #    # Create a release and upload the executable
