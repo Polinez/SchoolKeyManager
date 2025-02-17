@@ -27,10 +27,14 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       run: |
-        $release = Invoke-RestMethod -Headers @{Authorization = "Bearer $env:GITHUB_TOKEN"} `
+        $release = Invoke-RestMethod -Headers @{Authorization = "Bearer $env.GITHUB_TOKEN"} `
                   -Uri "https://api.github.com/repos/${{ github.repository }}/releases/tags/v${{ env.VERSION }}"
         $uploadUrl = $release.upload_url -replace "{.*}", ""
         echo "upload_url=$uploadUrl" >> $env:GITHUB_ENV
+
+    # Debug upload_url
+    - name: Debug upload_url
+      run: echo ${{ env.upload_url }}
 
     # Set up Python environment and install dependencies
     - name: Set up Python
@@ -48,6 +52,10 @@ jobs:
     - name: Build application with PyInstaller
       run: |
         pyinstaller --onefile --windowed --add-data "actions;actions" --add-data "classes;classes" --add-data "dataBase;dataBase" --add-data "keyicon.ico;." --add-data "lists.py;." --add-data "styles.py;." --icon=keyicon.ico --name=menedzerKluczy main.py
+
+    # List files in dist folder (for debugging)
+    - name: List dist folder
+      run: dir dist
 
     # Upload the built application as an artifact
     - name: Upload artifact
