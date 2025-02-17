@@ -47,27 +47,40 @@ jobs:
         name: application
         path: dist/menedzerKluczy.exe
 
-    # Create a release and upload the executable
-    - name: Create GitHub Release
-      id: create_release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-      with:
-        tag_name: v${{ env.VERSION }}
-        release_name: "v${{ env.VERSION }} Latest"
-        body: |
-          Release on Win / Intelx86 CPU
 
-        draft: false
-        prerelease: false
-
-    - name: Upload to Release
+ # Upload the executable to an existing release
+    - name: Upload to existing Release
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        upload_url: ${{ github.event.release.upload_url || github.event.release.html_url }}
         asset_path: dist/menedzerKluczy.exe
         asset_name: menedzerKluczy.exe
         asset_content_type: application/octet-stream
+
+# its a version for creating release by -> git tag v0.2.4  git push origin v0.2.4
+#    # Create a release and upload the executable
+#    - name: Create GitHub Release
+#      id: create_release
+#      uses: actions/create-release@v1
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+#      with:
+#        tag_name: v${{ env.VERSION }}
+#        release_name: "v${{ env.VERSION }} Latest"
+#        body: |
+#          Release on Win / Intelx86 CPU
+#
+#        draft: false
+#        prerelease: false
+#
+#    - name: Upload to Release
+#      uses: actions/upload-release-asset@v1
+#      env:
+#        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+#      with:
+#        upload_url: ${{ steps.create_release.outputs.upload_url }}
+#        asset_path: dist/menedzerKluczy.exe
+#        asset_name: menedzerKluczy.exe
+#        asset_content_type: application/octet-stream
