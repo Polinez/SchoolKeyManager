@@ -23,7 +23,7 @@ jobs:
         echo "VERSION=$TAG" >> $env:GITHUB_ENV
         
         # Save version to version.txt
-        echo $TAG > version.txt
+        echo 'v'+$TAG > version.txt
         type version.txt
 
       # Install Python and dependencies
