@@ -87,7 +87,7 @@ def check_for_update():
         if local_version != latest_version:
             messagebox.showinfo(
                 "Nowa wersja!",
-                f"Dostępna jest nowa wersja: {latest_version}\nZaktualizuj aplikację!\n\n"
+                f"Dostępna jest nowa wersja: {local_version} -> {latest_version}\nZaktualizuj aplikację!\n\n"
                 f"Aby pobrać najnowszą wersję, odwiedź:\n {release_url}"
             )
 
