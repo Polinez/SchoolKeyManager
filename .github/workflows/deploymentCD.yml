@@ -27,10 +27,10 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       run: |
-        echo "Fetching release for tag v${{ env.VERSION }}"
         $release = Invoke-RestMethod -Headers @{Authorization = "Bearer $env:GITHUB_TOKEN"} `
                   -Uri "https://api.github.com/repos/${{ github.repository }}/releases/tags/v${{ env.VERSION }}"
-        echo "upload_url=$($release.upload_url -replace '{.*}', '')" >> $env:GITHUB_ENV
+        $uploadUrl = $release.upload_url -replace "{.*}", ""
+        echo "upload_url=$uploadUrl" >> $env:GITHUB_ENV
 
     # Set up Python environment and install dependencies
     - name: Set up Python
