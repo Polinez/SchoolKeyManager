@@ -2,10 +2,8 @@ name: Build and Release
 
 on:
   push:
-    branches:
-      - main
-#    tags:
-#      - 'v[0-9]+.[0-9]+.[0-9]+'  # To upload a new release, push a tag with the format v1.2.3
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'  # To upload a new release, push a tag with the format v1.2.3
 
 jobs:
   build-and-release:
@@ -20,11 +18,12 @@ jobs:
     - name: Extract version from Github tag
       id: get_version
       run: |
-        # Remove 'v' prefix 
-        TAG=${GITHUB_REF#refs/tags/v}
-        echo "VERSION=$TAG" >> $GITHUB_ENV
+        # remove the 'v' prefix from the tag
+        $TAG = $env:GITHUB_REF -replace '^refs/tags/v', ''
+        echo "VERSION=$TAG" >> $env:GITHUB_ENV
+      
 
-    # Install Python and dependencies
+      # Install Python and dependencies
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
