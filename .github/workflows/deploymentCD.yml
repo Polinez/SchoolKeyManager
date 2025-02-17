@@ -24,6 +24,7 @@ jobs:
         
         # Save version to version.txt
         echo $TAG > version.txt
+        type version.txt
 
       # Install Python and dependencies
     - name: Set up Python
