@@ -78,10 +78,18 @@ SchoolKeyMenager/
 
 
 ## 🚀 How to Run the Application
-Download the .zip file from the [Download](https://github.com/Polinez/SchoolKeyMenager/releases) .
-The link provides two versions: 
-- v0.0.2: For Windows devices with Intel/AMD processors.
-- v0.0.1: For Windows devices with ARM processors.
+To make a new realase use this comands
+```
+git tag v0.2.4
+git push origin v0.2.4
+```
+
+Download the .exe file from the [Download](https://github.com/Polinez/SchoolKeyMenager/releases)
+and run it.
+
+The link provides difrent versions, lock up what is for youre pc: 
+- For Windows devices with Intel/AMD processors.
+- For Windows devices with ARM processors.
 
 ## 🔮 Future Enhancements
 - Improved data visualization.
