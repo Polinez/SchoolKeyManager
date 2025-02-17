@@ -1,5 +1,6 @@
 import os.path
 from tkinter import messagebox
+import requests
 # pdf
 from fpdf import FPDF
 from unidecode import unidecode
@@ -57,3 +58,27 @@ def save_errors_action():
                             f"Bledy zostały zapisane do pliku {pdf_file} w folderze aplikacji. \nMożesz teraz je wydrukować.")
     except Exception as e:
         messagebox.showerror("Błąd", f"Wystąpił błąd podczas zapisu pliku PDF: {e}")
+
+# check if there is no never version on github
+def check_for_update():
+    url = f"https://api.github.com/repos/Polinez/SchoolKeyManager/releases/latest"
+
+    try:
+        response = requests.get(url)
+        response.raise_for_status()
+        latest_release = response.json()
+        latest_version = latest_release['tag_name']  # get latest version number
+        release_url = latest_release['html_url']
+
+        with open("version.txt", "r") as file:
+            local_version = file.read().strip()
+
+        if local_version != latest_version:
+            messagebox.showinfo(
+                "Nowa wersja!",
+                f"Dostępna jest nowa wersja: {latest_version}\nZaktualizuj aplikację!\n\n"
+                f"Aby pobrać najnowszą wersję, odwiedź:\n {release_url}"
+            )
+
+    except requests.exceptions.RequestException as e:
+        messagebox.showwarning("Błąd połączenia", "Nie udało się sprawdzić najnowszej wersji.\nSpróbuj ponownie później.")

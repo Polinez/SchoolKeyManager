@@ -21,7 +21,9 @@ jobs:
         # remove the 'v' prefix from the tag
         $TAG = $env:GITHUB_REF -replace '^refs/tags/v', ''
         echo "VERSION=$TAG" >> $env:GITHUB_ENV
-      
+        
+        # Save version to version.txt
+        echo $TAG > version.txt
 
       # Install Python and dependencies
     - name: Set up Python
@@ -38,7 +40,7 @@ jobs:
     # Build the application
     - name: Build application with PyInstaller
       run: |
-        pyinstaller --onefile --windowed --add-data "actions;actions" --add-data "classes;classes" --add-data "dataBase;dataBase" --add-data "keyicon.ico;." --add-data "lists.py;." --add-data "styles.py;." --icon=keyicon.ico --name=menedzerKluczy main.py
+        pyinstaller --onefile --windowed --add-data "actions;actions" --add-data "classes;classes" --add-data "dataBase;dataBase" --add-data "keyicon.ico;." --add-data "lists.py;." --add-data "version.txt;." --add-data "styles.py;." --icon=keyicon.ico --name=menedzerKluczy main.py
 
     # Upload the built application as an artifact
     - name: Upload artifact

@@ -18,6 +18,7 @@ from actions import main_actions
 from lists import classList, keysList, lockersList
 
 
+
 def clear_frame():
     for widget in content_frame.winfo_children():
         widget.destroy()
@@ -389,6 +390,8 @@ if __name__ == "__main__":
     content_frame = Frame(mainPage, **FRAME_STYLE)
     content_frame.pack(fill=BOTH, expand=True)
 
+    # checking version
+    main_actions.check_for_update()
     # Create database
     create_db()
     # Run
