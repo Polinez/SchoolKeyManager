@@ -18,25 +18,12 @@ jobs:
     - name: Extract version from Github tag
       id: get_version
       run: |
+        # remove the 'v' prefix from the tag
         $TAG = $env:GITHUB_REF -replace '^refs/tags/v', ''
         echo "VERSION=$TAG" >> $env:GITHUB_ENV
+      
 
-    # Fetch release data to find upload_url
-    - name: Get release by tag
-      id: get_release
-      env:
-        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-      run: |
-        $release = Invoke-RestMethod -Headers @{Authorization = "Bearer $env.GITHUB_TOKEN"} `
-                  -Uri "https://api.github.com/repos/${{ github.repository }}/releases/tags/v${{ env.VERSION }}"
-        $uploadUrl = $release.upload_url -replace "{.*}", ""
-        echo "upload_url=$uploadUrl" >> $env:GITHUB_ENV
-
-    # Debug upload_url
-    - name: Debug upload_url
-      run: echo ${{ env.upload_url }}
-
-    # Set up Python environment and install dependencies
+      # Install Python and dependencies
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
@@ -53,10 +40,6 @@ jobs:
       run: |
         pyinstaller --onefile --windowed --add-data "actions;actions" --add-data "classes;classes" --add-data "dataBase;dataBase" --add-data "keyicon.ico;." --add-data "lists.py;." --add-data "styles.py;." --icon=keyicon.ico --name=menedzerKluczy main.py
 
-    # List files in dist folder (for debugging)
-    - name: List dist folder
-      run: dir dist
-
     # Upload the built application as an artifact
     - name: Upload artifact
       uses: actions/upload-artifact@v4
@@ -64,40 +47,27 @@ jobs:
         name: application
         path: dist/menedzerKluczy.exe
 
-    # Upload the executable to the release
-    - name: Upload to existing Release
+    # Create a release and upload the executable
+    - name: Create GitHub Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+      with:
+        tag_name: v${{ env.VERSION }}
+        release_name: "v${{ env.VERSION }} Latest"
+        body: |
+          Release on Win / Intelx86 CPU
+
+        draft: false
+        prerelease: false
+
+    - name: Upload to Release
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
       with:
-        upload_url: ${{ env.upload_url }}
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: dist/menedzerKluczy.exe
         asset_name: menedzerKluczy.exe
         asset_content_type: application/octet-stream
-
-
-# its a version for creating release by -> git tag v0.2.4  git push origin v0.2.4
-#    # Create a release and upload the executable
-#    - name: Create GitHub Release
-#      id: create_release
-#      uses: actions/create-release@v1
-#      env:
-#        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-#      with:
-#        tag_name: v${{ env.VERSION }}
-#        release_name: "v${{ env.VERSION }} Latest"
-#        body: |
-#          Release on Win / Intelx86 CPU
-#
-#        draft: false
-#        prerelease: false
-#
-#    - name: Upload to Release
-#      uses: actions/upload-release-asset@v1
-#      env:
-#        GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-#      with:
-#        upload_url: ${{ steps.create_release.outputs.upload_url }}
-#        asset_path: dist/menedzerKluczy.exe
-#        asset_name: menedzerKluczy.exe
-#        asset_content_type: application/octet-stream
