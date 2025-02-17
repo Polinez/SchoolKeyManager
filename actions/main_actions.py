@@ -1,4 +1,5 @@
 import os.path
+import sys
 from tkinter import messagebox
 import requests
 # pdf
@@ -59,6 +60,16 @@ def save_errors_action():
     except Exception as e:
         messagebox.showerror("Błąd", f"Wystąpił błąd podczas zapisu pliku PDF: {e}")
 
+
+
+def get_version_file_path():
+    if getattr(sys, 'frozen', False):
+        # if app runs as EXE
+        return os.path.join(sys._MEIPASS, 'version.txt')
+    else:
+        # if app runs in development environment
+        return 'version.txt'
+
 # check if there is no never version on github
 def check_for_update():
     url = f"https://api.github.com/repos/Polinez/SchoolKeyManager/releases/latest"
@@ -70,7 +81,7 @@ def check_for_update():
         latest_version = latest_release['tag_name']  # get latest version number
         release_url = latest_release['html_url']
 
-        with open("version.txt", "r") as file:
+        with open(get_version_file_path(), "r") as file:
             local_version = file.read().strip()
 
         if local_version != latest_version:
