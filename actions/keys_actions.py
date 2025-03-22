@@ -26,9 +26,6 @@ def add_key_action(key_nr, key_class, key_table):
             messagebox.showwarning("Brak danych", "Nie podano numeru klucza.")
             return
 
-        if not re.match("^[0-9]{4}$", key_nr.get()):
-            messagebox.showerror("Błąd", "Numer klucza musi się składać z 4 cyfr np. 1234")
-            return
 
         # if key number matches the number of any locker
         if not any(l.number == int(key_nr.get()) for l in lockersList):
@@ -97,9 +94,6 @@ def find_key_action(key_nr):
         messagebox.showwarning("Brak danych", "Nie podano numeru klucza do wyszukania.")
         return
 
-    if len(key_nr.get()) != 4:
-        messagebox.showerror("Błąd", "Numer klucza musi się składać z 4 cyfr np. 1234")
-        return
 
     for key in keysList:
         if int(key_nr.get()) == key.number:

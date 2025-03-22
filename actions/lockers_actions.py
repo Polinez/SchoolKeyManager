@@ -28,10 +28,6 @@ def add_locker_action(locker_nr, locker_room, locker_row, locker_column,locker_t
             messagebox.showerror("Błąd", "Numer szafki oraz kolumna muszą być liczbami całkowitymi.")
             return
 
-        if not re.match("^[0-9]{4}$", locker_nr.get()):
-            messagebox.showerror("Błąd", "Numer szafki musi się składać z 4 cyfry np. 1234")
-            return
-
         # assighning values
         row = locker_row.get()
         number = int(locker_nr.get())
@@ -83,10 +79,6 @@ def find_locker_action(locker_nr):
         messagebox.showwarning("Brak danych", "Nie podano numeru szafki do wyszukania.")
         return
 
-    if len(locker_nr.get()) != 4:
-        messagebox.showerror("Błąd", "Numer szafki musi się składać z 4 cyfr np. 1234")
-        return
-
     for locker in lockersList:
         if int(locker_nr.get()) == locker.number:
             messagebox.showinfo("Pozycja szafki", f"Szafka której szukasz jest w : {locker.room}\npozycja: {locker.position[0]}, kolumna: {locker.position[1]}")
@@ -130,10 +122,6 @@ def save_lockers_action():
 def change_locker_nr_action(old_locker_nr, new_locker_nr, locker_room, locker_row, locker_column):
     if old_locker_nr.get() == "" or new_locker_nr.get() == "":
         messagebox.showwarning("Brak danych", "Nie podano numeru szafki do zmiany.")
-        return
-
-    if not re.match("^[0-9]{4}$", old_locker_nr.get()) or not re.match("^[0-9]{4}$", new_locker_nr.get()):
-        messagebox.showerror("Błąd", "Numer szafki musi się składać z 4 cyfr np. 1234")
         return
 
     for k in keysList:
