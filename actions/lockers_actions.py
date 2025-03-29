@@ -155,3 +155,4 @@ def change_locker_nr_action(old_locker_nr, new_locker_nr, locker_room, locker_ro
                 return
     else:
         messagebox.showerror("Błąd", f"Nie ma szafki o numerze {old_locker_nr.get()}.")
+        return
