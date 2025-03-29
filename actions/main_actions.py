@@ -1,5 +1,6 @@
 import os.path
 import sys
+import threading
 from tkinter import messagebox
 import requests
 # pdf
@@ -71,25 +72,48 @@ def get_version_file_path():
         return 'version.txt'
 
 # check if there is no never version on github
-def check_for_update():
-    url = f"https://api.github.com/repos/Polinez/SchoolKeyManager/releases/latest"
+def check_for_update(root):
+    def check():
+        try:
+            url = "https://api.github.com/repos/Polinez/SchoolKeyManager/releases/latest"
 
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-        latest_release = response.json()
-        latest_version = latest_release['tag_name']  # get latest version number
-        release_url = latest_release['html_url']
+            # Ustaw timeout (5 sekund na połączenie, 10 sekund na odpowiedź)
+            response = requests.get(url, timeout=(5, 10))
+            response.raise_for_status()
 
-        with open(get_version_file_path(), "r") as file:
-            local_version = file.read().strip()
+            latest_release = response.json()
+            latest_version = latest_release['tag_name']
+            release_url = latest_release['html_url']
 
-        if local_version != latest_version:
-            messagebox.showinfo(
-                "Nowa wersja!",
-                f"Dostępna jest nowa wersja: {local_version} -> {latest_version}\nZaktualizuj aplikację!\n\n"
-                f"Aby pobrać najnowszą wersję, odwiedź:\n {release_url}"
-            )
+            try:
+                with open(get_version_file_path(), "r") as file:
+                    local_version = file.read().strip()
 
-    except requests.exceptions.RequestException as e:
-        messagebox.showwarning("Błąd połączenia", "Nie udało się sprawdzić najnowszej wersji.\nSpróbuj ponownie później.")
+                if local_version != latest_version:
+                    root.after(0, lambda: messagebox.showinfo(
+                        "Nowa wersja!",
+                        f"Dostępna jest nowa wersja: {local_version} -> {latest_version}\n"
+                        f"Zaktualizuj aplikację!\n\n"
+                        f"Aby pobrać najnowszą wersję, odwiedź:\n{release_url}"
+                    ))
+
+            except FileNotFoundError:
+                root.after(0, lambda: messagebox.showwarning(
+                    "Błąd",
+                    "Nie można znaleźć pliku wersji lokalnej."
+                ))
+
+        except requests.exceptions.Timeout:
+            # Czas oczekiwania na odpowiedź przekroczony - pomijamy komunikat
+            pass
+
+        except requests.exceptions.ConnectionError:
+            # Brak połączenia internetowego - również pomijamy komunikat
+            pass
+
+        except requests.exceptions.RequestException as e:
+            # Inne błędy - logujemy, ale nie wyświetlamy użytkownikowi
+            print(f"Błąd podczas sprawdzania aktualizacji: {e}")
+
+    # Uruchom w tle
+    threading.Thread(target=check, daemon=True).start()

@@ -391,7 +391,7 @@ if __name__ == "__main__":
     content_frame.pack(fill=BOTH, expand=True)
 
     # checking version
-    main_actions.check_for_update()
+    main_actions.check_for_update(mainPage)
     # Create database
     create_db()
     # Run
